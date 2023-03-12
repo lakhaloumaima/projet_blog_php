@@ -2,17 +2,26 @@
 include_once("config.php");
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$username = $_POST['username'];
-	$sql = "SELECT * FROM users WHERE username = :username";
-	$stmt = $dbConn->prepare($sql);
-	$stmt->bindParam(":username", $username, PDO::PARAM_INT);
-	$stmt->execute();
-	$resultUsers = $stmt->fetch(PDO::FETCH_ASSOC);
-	#header("Location: index.php");
 
-	return $resultUsers;
-}
+if(isset($_GET['search_term'])) {
+	// Retrieve the search term from the form data
+	$search_term = $_GET['search_term'];
+
+	// Execute a PDO query to search for posts by title
+	$stmt = $dbConn->prepare("SELECT * FROM users WHERE username LIKE :search_term  ");
+	$stmt->bindValue(':search_term', '%' . $search_term . '%');
+	$stmt->execute();
+	$resultUsers = $stmt->fetchAll();
+
+  } else {
+	// If no search term is provided, retrieve post
+	$stmt = $dbConn->query("SELECT * FROM users ");
+	$resultUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  }
+
+
+
 ?>
 <html>
 <head>
@@ -120,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					</button>
 
 					<!-- Topbar Search -->
-					<form  method="post" action=""
+					<form  method="GET" action=""
 						class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
 						<div class="input-group">
 							<input type="text" name="search_term" id="search_term" class="form-control bg-light border-0 small" placeholder="Search for..."
@@ -162,3 +171,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 				</nav>
 
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="vendor/jquery/jquery.min.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="js/sb-admin-2.min.js"></script>
+
+	<!-- Page level plugins -->
+	<script src="vendor/chart.js/Chart.min.js"></script>
+
+	<!-- Page level custom scripts -->
+	<script src="js/demo/chart-area-demo.js"></script>
+	<script src="js/demo/chart-pie-demo.js"></script>

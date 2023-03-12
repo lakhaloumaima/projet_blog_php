@@ -1,11 +1,14 @@
-
 <?php
 // including the database connection file
 include_once("config.php");
 session_start();
-if(isset($_POST['update']))
+
+//getting id from url
+$id = $_GET['id'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
-	$id = $_GET['id'];
+	$user_id = $_SESSION['user_id'];
 
 	$title=$_POST['title'];
 	$desc=$_POST['desc'];
@@ -22,25 +25,17 @@ if(isset($_POST['update']))
 		}
 	} else {
 		//updating the table
-		$sql = "UPDATE users SET title=:title, desc=:desc WHERE id=:id";
-		$query = $dbConn->prepare($sql);
+		$stmt = $dbConn->prepare("UPDATE posts SET `title` = :title, `desc` = :desc WHERE id = :id AND user_id = :user_id");
+		$stmt->execute(array(':title' => $title, ':desc' => $desc, ':id' => $id, ':user_id' => $user_id));
 
-		$query->bindparam(':id', $id);
-		$query->bindparam(':title', $title);
-		$query->bindparam(':desc', $desc);
-		$query->execute();
-
-		// Alternative to above bindparam and execute
-		// $query->execute(array(':id' => $id, ':name' => $name, ':email' => $email, ':age' => $age));
-
-		//redirectig to the display page. In our case, it is index.php
-		header("Location: index_posts.php");
+		// Check if the update was successful
+		if ($stmt->rowCount() > 0) {
+			header("Location: profile.php");
+		} else {
+			echo "error !!" ;
+		}
 	}
 }
-?>
-<?php
-//getting id from url
-$id = $_GET['id'];
 
 //selecting data associated with this particular id
 $sql = "SELECT * FROM posts WHERE id=:id";
@@ -53,6 +48,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 	$desc = $row['desc'];
 }
 ?>
+
 <html>
 <head>
 	<title>Edit Post </title>
@@ -68,7 +64,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 		<a href="index.php"> Back to Dashboard  </a>
 		<br/><br/>
 
-		<form name="form1" method="post" >
+		<form name="form1" method="POST" >
 
 				<tr>
 					<td>Name</td>
@@ -81,7 +77,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 				</tr>
 				<br>
 				<tr>
-					<td><input type="hidden" name="user_id" value=<?php echo $_SESSION['user_id'];?>></td>
+					<!-- <td><input type="hidden" name="user_id" value=<?php echo $_SESSION['user_id'];?>></td> -->
 					<td><input type="submit" name="update" value="Update" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" ></td>
 				</tr>
 

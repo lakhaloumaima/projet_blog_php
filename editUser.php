@@ -2,9 +2,10 @@
 // including the database connection file
 include_once("config.php");
 session_start();
-if(isset($_POST['update']))
+$user_id = $_SESSION['user_id'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
-	$id = $_GET['id'] ;
 
 	$username=$_POST['username'];
 	$email=$_POST['email'];
@@ -21,16 +22,13 @@ if(isset($_POST['update']))
 		}
 	} else {
 		//updating the table
-		$sql = "UPDATE users SET username=:username, email=:email WHERE id=:id";
+		$sql = "UPDATE users SET `username` =:username, `email` =:email WHERE id=:user_id";
 		$query = $dbConn->prepare($sql);
 
-		$query->bindparam(':id', $id);
+		#$query->bindparam(':id', $id);
 		$query->bindparam(':username', $username);
 		$query->bindparam(':email', $email);
 		$query->execute();
-
-		// Alternative to above bindparam and execute
-		// $query->execute(array(':id' => $id, ':name' => $name, ':email' => $email, ':age' => $age));
 
 		//redirectig to the display page. In our case, it is index.php
 		header("Location: index.php");
@@ -38,13 +36,11 @@ if(isset($_POST['update']))
 }
 ?>
 <?php
-//getting id from url
-$id = $_GET['id'];
 
 //selecting data associated with this particular id
-$sql = "SELECT * FROM users WHERE id=:id";
+$sql = "SELECT * FROM users WHERE id=:user_id";
 $query = $dbConn->prepare($sql);
-$query->execute(array(':id' => $id));
+$query->execute(array(':id' => $user_id));
 
 while($row = $query->fetch(PDO::FETCH_ASSOC))
 {
@@ -68,7 +64,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 		<a href="index.php"> Back to Dashboard  </a>
 		<br/><br/>
 
-		<form name="form1" method="post" >
+		<form method="POST" >
 				<tr>
 					<td>Name</td>
 					<td><input class="form-control" type="text" name="username" value="<?php echo $username;?>"></td>

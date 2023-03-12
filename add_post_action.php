@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		//display success message
 		echo "<font color='green'>Data added successfully.";
-		echo "<br/><a href='index_posts.php'>View Result</a>";
+
 		header('Location: index_posts.php');
 	}
 }
