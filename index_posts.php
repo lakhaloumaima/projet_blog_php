@@ -66,30 +66,153 @@ if ( !($user_id))  {
 // 	$post_id=$row['id'];
 
 // if ( $click = 0  ) {
-	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-		# $click = 0 ;
-		$nb_report = $_POST['nb_report'] ;
-		$id = $_POST['id'] ;
+	// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	// 	# $click = 0 ;
+	// 	$nb_report = $_POST['nb_report'] ;
+	// 	$id = $_POST['id'] ;
 
-		//updating the table
-		$stmt = $dbConn->prepare("UPDATE posts SET `nb_report` = :nb_report + 1 WHERE id = :id ");
-		$stmt->execute(array(':nb_report' => $nb_report  , ':id' => $id  ));
+	// 	//updating the table
+	// 	$stmt = $dbConn->prepare("UPDATE posts SET `nb_report` = :nb_report + 1 WHERE id = :id ");
+	// 	$stmt->execute(array(':nb_report' => $nb_report  , ':id' => $id  ));
 
-		echo "Post updated successfully.";
-		// Check if the update was successful
-		if ($stmt) {
-			header("Location: index_posts.php");
-		} else {
-			echo "error !!" ;
-		}
-	}
-
+	// 	echo "Post updated successfully.";
+	// 	// Check if the update was successful
+	// 	if ($stmt) {
+	// 		header("Location: index_posts.php");
+	// 	} else {
+	// 		echo "error !!" ;
+	// 	}
+	// }
 
 // else{
 // 	echo $click ;
 // 	echo "you cannot report that  " ;
 // }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if ( isset( $_POST['nb_report'] ) ) {
+		$nb_report = $_POST['nb_report'] ;
+		$post_id = $_POST['id'] ;
+		$vote_type =  $_POST['vote_type']  ;
+		// check if user has already reported the post
+		$stmt = $dbConn->prepare("SELECT * FROM votes WHERE user_id = ? AND post_id = ? AND vote_type = 'report' ");
+		$stmt->execute([ $user_id , $post_id ]);
+		$vote = $stmt->fetch();
+
+		if (!$vote) {
+		// update nb_report in posts table
+			$stmt = $dbConn->prepare("UPDATE posts SET `nb_report` = :nb_report + 1 WHERE id = :post_id ");
+			$stmt->execute(array(':nb_report' => $nb_report  , ':post_id' => $post_id  ));
+			# $stmt->execute([$post_id]);
+
+			// insert vote record in votes table
+			$stmt2 = $dbConn->prepare("INSERT INTO votes ( `user_id`, `post_id`, `vote_type` ) VALUES (?, ?, ? ) ");
+			$stmt2->execute([ $user_id , $post_id,  $vote_type ]);
+			header('Location: index_posts.php');
+		} else {
+			echo "<div  class='alert alert-danger' role='alert' > You already reported this post !! </div> ";
+		// user has already reported the post
+		// handle this case as needed, e.g. display an error message
+		}
+	}
+
+	if ( isset( $_POST['nb_like'] ) ) {
+		$nb_like = $_POST['nb_like'] ;
+		$post_id = $_POST['id'] ;
+		$vote_type =  $_POST['vote_type']  ;
+		// check if user has already reported the post
+		$stmt = $dbConn->prepare("SELECT * FROM votes WHERE vote_type = 'like' AND user_id = ? AND post_id = ?  ");
+		$stmt->execute([ $user_id , $post_id ]);
+		$vote = $stmt->fetch();
+
+		if (!$vote) {
+			$nb_dislike = $_POST['nb_dislike'] ;
+			// check if user has already reported the post
+			$stmtt = $dbConn->prepare("SELECT * FROM votes WHERE vote_type = 'dislike' AND user_id = ? AND post_id = ?  ");
+			$stmtt->execute([ $user_id , $post_id ]);
+			$votee = $stmtt->fetch();
+			if ($votee) {
+				// insert vote record in votes table
+				$stmtt2 = $dbConn->prepare("DELETE FROM votes WHERE  vote_type = 'dislike' AND user_id = ? AND post_id = ? ");
+				$stmtt2->execute([ $user_id , $post_id ]);
+			// update nb_report in posts table
+				$stmtt = $dbConn->prepare("UPDATE posts SET `nb_like` = :nb_like + 1 , `nb_dislike` = :nb_dislike - 1 WHERE id = :post_id ");
+				$stmtt->execute(array(':nb_like' => $nb_like , ':nb_dislike' => $nb_dislike  , ':post_id' => $post_id  ));
+				# $stmt->execute([$post_id]);
+
+				$stmttt2 = $dbConn->prepare("INSERT INTO votes ( `user_id`, `post_id`, `vote_type` ) VALUES (?, ?, ? ) ");
+				$stmttt2->execute([ $user_id , $post_id,  $vote_type ]);
+
+				header('Location: index_posts.php');
+			} else {
+				// update nb_report in posts table
+				$stmtt = $dbConn->prepare("UPDATE posts SET  `nb_like` = :nb_like + 1  WHERE id = :post_id ");
+				$stmtt->execute(array(  ':nb_like' => $nb_like  , ':post_id' => $post_id  ));
+				# $stmt->execute([$post_id]);
+
+				$stmttt2 = $dbConn->prepare("INSERT INTO votes ( `user_id`, `post_id`, `vote_type` ) VALUES (?, ?, ? ) ");
+				$stmttt2->execute([ $user_id , $post_id,  $vote_type ]);
+				header('Location: index_posts.php');
+
+			// user has already reported the post
+			// handle this case as needed, e.g. display an error message
+			}
+		}
+			else {
+				# header('Location: index_posts.php');
+				echo "<div  class='alert alert-danger' role='alert' > You already liked this post !! </div> ";
+			}
+
+
+	}
+
+	if ( isset( $_POST['nb_dislikee'] ) ) {
+		$nb_dislike = $_POST['nb_dislikee'] ;
+		$post_id = $_POST['id'] ;
+		$vote_type =  $_POST['vote_type']  ;
+		$nb_like = $_POST['nb_likee'] ;
+
+		$stmt = $dbConn->prepare("SELECT * FROM votes WHERE vote_type = 'dislike' AND user_id = ? AND post_id = ?  ");
+		$stmt->execute([ $user_id , $post_id ]);
+		$vote = $stmt->fetch();
+		if (!$vote) {
+
+			// check if user has already reported the post
+			$stmtt = $dbConn->prepare("SELECT * FROM votes WHERE vote_type = 'like' AND user_id = ? AND post_id = ?  ");
+			$stmtt->execute([ $user_id , $post_id ]);
+			$votee = $stmtt->fetch();
+			if ($votee) {
+				// insert vote record in votes table
+				$stmtt2 = $dbConn->prepare("DELETE FROM votes WHERE  vote_type = 'like' AND user_id = ? AND post_id = ? ");
+				$stmtt2->execute([ $user_id , $post_id ]);
+			// update nb_report in posts table
+				$stmtt = $dbConn->prepare("UPDATE posts SET  `nb_dislike` = :nb_dislike + 1 , `nb_like` = :nb_like - 1  WHERE id = :post_id ");
+				$stmtt->execute(array(  ':nb_dislike' => $nb_dislike  , ':nb_like' => $nb_like , ':post_id' => $post_id  ));
+				# $stmt->execute([$post_id]);
+
+				$stmttt2 = $dbConn->prepare("INSERT INTO votes ( `user_id`, `post_id`, `vote_type` ) VALUES (?, ?, ? ) ");
+				$stmttt2->execute([ $user_id , $post_id,  $vote_type ]);
+
+				header('Location: index_posts.php');
+			} else {
+				// update nb_report in posts table
+				$stmtt = $dbConn->prepare("UPDATE posts SET  `nb_dislike` = :nb_dislike + 1  WHERE id = :post_id ");
+				$stmtt->execute(array(  ':nb_dislike' => $nb_dislike  , ':post_id' => $post_id  ));
+				# $stmt->execute([$post_id]);
+
+				$stmttt2 = $dbConn->prepare("INSERT INTO votes ( `user_id`, `post_id`, `vote_type` ) VALUES (?, ?, ? ) ");
+				$stmttt2->execute([ $user_id , $post_id,  $vote_type ]);
+				header('Location: index_posts.php');
+			// user has already reported the post
+			// handle this case as needed, e.g. display an error message
+			}
+		}
+		else {
+			# header('Location: index_posts.php');
+			echo "<div  class='alert alert-danger' role='alert' > You already unliked this post !! </div> ";
+		}
+		}
+	}
 
 
 ?>
@@ -113,8 +236,11 @@ if ( !($user_id))  {
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 	<style>
+		h2 , h3 {
+			color: black ;
+		}
 		button {
-			flex: right ;
+			float: right ;
 		}
 	</style>
 </head>
@@ -245,12 +371,12 @@ if ( !($user_id))  {
 							</li>
 
 				</nav>
-	</div>
+
 		<!-- Begin Page Content -->
 		<div class="container-fluid">
 
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
-				<h1 class="mb-0"> Welcome, <?php echo $_SESSION['username']; ?> !! </h1>
+				<h2 class="mb-0"> Welcome, <?php echo $_SESSION['username']; ?> !! </h2>
 				<a href="add_post.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
 						class="fas fa-download fa-sm text-white-50"></i> Add Post </a>
 			</div>
@@ -259,15 +385,18 @@ if ( !($user_id))  {
 					echo "<div class='card-group'>" ;
 					echo   "<div class='card'>" ;
 					echo   "<div class='card-body'> " ;
-					echo   "<h5 class='card-title'>" .$row['title']. "</h5>" ;
+					echo   "<h3 class='card-title'>" .$row['title']. "</h3>" ;
 					echo   "<p class='card-text'> ".$row['desc']." </p>" ;
-					if( $row['nb_report'] < 3 ):
-						echo  "<form method='POST' ><i class='fas fa-plus fa-sm' ></i><input  name='nb_report' type='hidden'  class='btn btn-primary' type='submit' value='" .$row['nb_report']. "' > &nbsp; <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					if( $row['nb_report'] >= 2 ):
+						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-danger' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					endif ;
+					if( $row['nb_report'] <= 1 ):
+						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-success' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
 					endif ;
 					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
 					echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
-					echo  "<button class='btn btn-primary' name='like' >".$row['nb_like']. " <i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i></button>  " ;
-					echo  "<button class='btn btn-primary' name='dislike' >".$row['nb_dislike']. " <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i></button>  "  ;
+					echo  "<form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					echo  "<form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
 					echo  "</div> " ;
 					echo  "</div> " ;
 					echo" </div> " ;
@@ -280,32 +409,6 @@ if ( !($user_id))  {
 		</div>
 		<!-- End of Main Content -->
 
-
-	<?php if ($test): ?>
-		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-		Launch static backdrop modal
-		</button>
-
-		<!-- Modal -->
-		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				...
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Understood</button>
-			</div>
-			</div>
-		</div>
-		</div>
-	<?php endif ?>
 
 	<!-- Bootstrap core JavaScript-->
 	<script src="vendor/jquery/jquery.min.js"></script>

@@ -73,16 +73,16 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
         include_once( "sidebar.php" ) ;
     ?>
 
-<div class="container rounded bg-white mt-5 mb-5">
+<div class="container rounded bg-white mt-5 mb-2">
     <div class="row">
-        <div class="col-md-3 border-right">
+        <div class="col-md-4 border-right">
             <div class="d-flex flex-column p-3 py-2">
-                <img class="rounded-circle mt-5"
+                <img class="rounded-circle mt-2"
                     width="120px"
                     src="../img/logo.png"> <br>
                 <h3 class="text-black-50"><?php echo $_SESSION['email']; ?> </h3><span> </span></div>
         </div>
-        <div class="col-md-5 border-right">
+        <div class="col-md-6 border-right">
             <div class="p-3 py-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="text-right">Profile Settings</h4>
@@ -102,23 +102,24 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 
 			<div class="container">
 
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div class="d-sm-flex align-items-center justify-content-between mt-5 mb-4">
                     <a href="add_post.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                             class="fas fa-download fa-sm text-white-50"></i> Add Post </a>
                 </div>
 
-                <div class="card-group">
                     <?php foreach ($resultPosts as $row): {
+                        echo "<div class='card-group'>" ;
                         echo "<div class='card'>" ;
                         echo   "<div class='card-body'> " ;
                         echo    "<h3 class='card-title'>" .$row['title']. "</h3>" ;
                         echo   " <p class='card-text'> ".$row['desc']." </p>" ;
                         echo "<td ><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>";
-                        echo" </div> " ;
-                        echo" </div> " ;
+                        echo " </div> " ;
+                        echo " </div> " ;
+                        echo " </div> " ;
                     }
                     endforeach; ?>
-
+                </div>
                 </div>
             </div>
 
