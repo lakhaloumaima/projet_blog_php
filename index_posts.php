@@ -1,26 +1,24 @@
 <?php
 //including the database connection file
 include_once("config.php");
-include("functions.php");
+#include("functions.php");
 
 session_start();
 $user_id = $_SESSION['user_id'];
-//fetching data in descending order (lastest entry first)
 
-#$resultPosts = $dbConn->query("SELECT * FROM posts  WHERE nb_report < 3 ");
-
-if(isset($_GET['title'])) {
+if(isset($_GET['search_term'])) {
   // Retrieve the search term from the form data
-  $search_term = $_GET['title'];
+  $search_term = $_GET['search_term'];
 
   // Execute a PDO query to search for posts by title
-  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE title LIKE :search_term");
+  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE ( title LIKE :search_term ) ORDER BY id DESC");
   $stmt->bindValue(':search_term', '%' . $search_term . '%');
   $stmt->execute();
-  $resultPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $resultPosts = $stmt->fetchAll();
+
 } else {
   // If no search term is provided, retrieve post
-  $stmt = $dbConn->query("SELECT * FROM posts WHERE nb_report < 3 ");
+  $stmt = $dbConn->query("SELECT * FROM posts  WHERE nb_report < 3 ORDER BY id DESC");
   $resultPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 }
@@ -56,17 +54,41 @@ if ( !($user_id))  {
 	header("Location: login.php");
 }
 
-$post_id=$_GET['id'];
-$sql="SELECT * FROM posts WHERE id=:id";
-$stmt=$dbConn->prepare($sql);
-$stmt->bindParam(':id', $post_id ,PDO::PARAM_INT);
+// $post_id=$_GET['id'];
+// $sql="SELECT * FROM posts WHERE id=:id";
+// $stmt=$dbConn->prepare($sql);
+// $stmt->bindParam(':id', $post_id ,PDO::PARAM_INT);
 
-	$stmt->execute();
-	$row=$stmt->fetch();
-	$title=$row['title'];
-	$desc=$row['desc'];
-	$post_id=$row['id'];
+// 	$stmt->execute();
+// 	$row=$stmt->fetch();
+// 	$title=$row['title'];
+// 	$desc=$row['desc'];
+// 	$post_id=$row['id'];
 
+// if ( $click = 0  ) {
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		# $click = 0 ;
+		$nb_report = $_POST['nb_report'] ;
+		$id = $_POST['id'] ;
+
+		//updating the table
+		$stmt = $dbConn->prepare("UPDATE posts SET `nb_report` = :nb_report + 1 WHERE id = :id ");
+		$stmt->execute(array(':nb_report' => $nb_report  , ':id' => $id  ));
+
+		echo "Post updated successfully.";
+		// Check if the update was successful
+		if ($stmt) {
+			header("Location: index_posts.php");
+		} else {
+			echo "error !!" ;
+		}
+	}
+
+
+// else{
+// 	echo $click ;
+// 	echo "you cannot report that  " ;
+// }
 
 
 
@@ -76,74 +98,214 @@ $stmt->bindParam(':id', $post_id ,PDO::PARAM_INT);
 <html>
 <head>
 	<title>Home Page</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+	<style>
+		button {
+			flex: right ;
+		}
+	</style>
 </head>
 
 <body>
-<?php
- 	include_once( "sidebar.php") ;
-?>
+	<div id="wrapper">
 
-			<!-- Begin Page Content -->
-			<div class="container-fluid">
+		<!-- Sidebar -->
+		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-				<div class="d-sm-flex align-items-center justify-content-between mb-4">
-					<h1 class="mb-0"> Welcome, <?php echo $_SESSION['username']; ?> !! </h1>
-					<a href="add_post.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-							class="fas fa-download fa-sm text-white-50"></i> Add Post </a>
+			<!-- Sidebar - Brand -->
+			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+				<div class="sidebar-brand-icon rotate-n-15">
+					<i class="fas fa-laugh-wink"></i>
 				</div>
+				<div class="sidebar-brand-text mx-3">User  <sup> * </sup></div>
+			</a>
 
-                <div class="card-group">
-					<?php foreach ($resultPosts as $row): {
-						echo   "<div class='card'>" ;
-						echo   "<div class='card-body'> " ;
-						echo   "<h5 class='card-title'>" .$row['title']. "</h5>" ;
-						echo   " <p class='card-text'> ".$row['desc']." </p>" ;
-						echo  "" ; if( $user_id === $row['user_id'] ): "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
-						echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
-						echo  "<button class='btn btn-primary' name='like' >".$row['nb_like']. "$nbsp <i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i></button>  " ;
-						echo  "<button class='btn btn-primary' name='dislike' >".$row['nb_dislike']. "$nbsp <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i></button>  "  ;
+			<!-- Divider -->
+			<hr class="sidebar-divider my-0">
 
-						echo "<div>" ;
-						echo "<i " ;
-								if(userLikesDislikes($row['post_id'],$user_id,'like', $dbConn )):
-								echo "class='fa fa-thumbs-up like-btn' " ; ?>
-								<?php else:
-									echo "class='fa fa-thumbs-o-up like-btn' " ;
-								 endif ;
+			<!-- Nav Item - Dashboard -->
+			<li class="nav-item active">
+				<a class="nav-link" href="index_posts.php">
+					<i class="fas fa-fw fa-tachometer-alt"></i>
+					<span>Dashboard</span></a>
+			</li>
 
-								echo "data-id='<?php echo " .$row['post_id']. " ?>'> </i> " ;
-								echo "<span class='likes'>" ;
-							    getLikesDislikes( $row['post_id'] ,'like', $dbConn );
-								echo "</span> &nbsp;&nbsp;&nbsp;&nbsp;<i"  ;
-								if (userLikesDislikes($row['post_id'],$user_id,'dislike', $dbConn )):
-								echo	"class='fa fa-thumbs-down dislike-btn' " ; ?>
-								<?php else: ?>
-								<?php echo	"class='fa fa-thumbs-o-down dislike-btn' " ;
-								 endif ;
-								echo "data-id=" .$row['post_id']. ""  ;
-								echo "</i><span class='dislikes'>" ;
-								getLikesDislikes( $row['post_id'] ,'dislike', $dbConn );
-								echo "</span> </div>" ;
+			<!-- Divider -->
+			<hr class="sidebar-divider">
 
-						echo  "</div> " ;
-						echo  "</div> " ;
-						echo" </div> " ;
-					}
-					endforeach; ?>
-                </div>
+			<!-- Heading -->
+			<div class="sidebar-heading">
+				Interface
 			</div>
-			<!-- /.container-fluid -->
+
+			<!-- Nav Item - Pages Collapse Menu -->
+			<li class="nav-item">
+				<a class="nav-link collapsed" href="index_posts.php" data-toggle="collapse" data-target="#collapseTwo"
+					aria-expanded="true" aria-controls="collapseTwo">
+					<i class="fas fa-fw fa-cog"></i>
+					<span> Posts </span>
+				</a>
+				<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+					<div class="bg-white py-2 collapse-inner rounded">
+						<h6 class="collapse-header"> Actions : </h6>
+						<a class="collapse-item" href="add_post.php">Add </a>
+						<!-- <a class="collapse-item" href="editUser.php">Update </a>
+						<a class="collapse-item" href="deleteUser.php">Delete </a> -->
+					</div>
+				</div>
+			</li>
+
+			<!-- Nav Item - Utilities Collapse Menu -->
+			<li class="nav-item">
+				<a class="nav-link collapsed" href="profile.php" data-toggle="collapse" data-target="#collapseUtilities"
+					aria-expanded="true" aria-controls="collapseUtilities">
+					<i class="fas fa-fw fa-wrench"></i>
+					<span> My Profile </span>
+				</a>
+				<div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+					data-parent="#accordionSidebar">
+					<div class="bg-white py-2 collapse-inner rounded">
+						<h6 class="collapse-header"> Update :</h6>
+						<a class="collapse-item" href="profile.php">Informations </a>
+					</div>
+				</div>
+			</li>
+
+
+
+		</ul>
+		<!-- End of Sidebar -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+				<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+					<!-- Sidebar Toggle (Topbar) -->
+					<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+						<i class="fa fa-bars"></i>
+					</button>
+
+					<!-- Topbar Search -->
+					<form  method="GET"
+						class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+						<div class="input-group">
+							<input type="text" name="search_term" id="search_term" class="form-control bg-light border-0 small" placeholder="Search for..."
+								aria-label="Search" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-primary" name="title" id="title" type="submit">
+									<i class="fas fa-search fa-sm"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+
+					<div class="topbar-divider d-none d-sm-block"></div>
+					<!-- Nav Item - User Information -->
+					<li class="nav-item dropdown no-arrow">
+								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?php echo $_SESSION['username']; ?>  </span>
+									<img class="img-profile rounded-circle"
+										src="img/undraw_profile.svg">
+								</a>
+								<!-- Dropdown - User Information -->
+								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+									aria-labelledby="userDropdown">
+									<a class="dropdown-item" href="profile.php">
+										<i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+										Profile
+									</a>
+
+									<div class="dropdown-divider"></div>
+									<form action="logout.php" method="post">
+										<a class="dropdown-item"  >
+											<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+											<input type="submit" value="Logout" name="logout" >
+										</a>
+									</form>
+								</div>
+							</li>
+
+				</nav>
+	</div>
+		<!-- Begin Page Content -->
+		<div class="container-fluid">
+
+			<div class="d-sm-flex align-items-center justify-content-between mb-4">
+				<h1 class="mb-0"> Welcome, <?php echo $_SESSION['username']; ?> !! </h1>
+				<a href="add_post.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+						class="fas fa-download fa-sm text-white-50"></i> Add Post </a>
+			</div>
+
+				<?php foreach ($resultPosts as $row): {
+					echo "<div class='card-group'>" ;
+					echo   "<div class='card'>" ;
+					echo   "<div class='card-body'> " ;
+					echo   "<h5 class='card-title'>" .$row['title']. "</h5>" ;
+					echo   "<p class='card-text'> ".$row['desc']." </p>" ;
+					if( $row['nb_report'] < 3 ):
+						echo  "<form method='POST' ><i class='fas fa-plus fa-sm' ></i><input  name='nb_report' type='hidden'  class='btn btn-primary' type='submit' value='" .$row['nb_report']. "' > &nbsp; <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					endif ;
+					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
+					echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
+					echo  "<button class='btn btn-primary' name='like' >".$row['nb_like']. " <i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i></button>  " ;
+					echo  "<button class='btn btn-primary' name='dislike' >".$row['nb_dislike']. " <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i></button>  "  ;
+					echo  "</div> " ;
+					echo  "</div> " ;
+					echo" </div> " ;
+				}
+				endforeach; ?>
+			</div>
+		</div>
+		<!-- /.container-fluid -->
 
 		</div>
 		<!-- End of Main Content -->
 
 
-	</div>
-	<!-- End of Content Wrapper -->
+	<?php if ($test): ?>
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+		Launch static backdrop modal
+		</button>
 
-	</div>
-	<!-- End of Page Wrapper -->
+		<!-- Modal -->
+		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Understood</button>
+			</div>
+			</div>
+		</div>
+		</div>
+	<?php endif ?>
 
 	<!-- Bootstrap core JavaScript-->
 	<script src="vendor/jquery/jquery.min.js"></script>
@@ -162,31 +324,7 @@ $stmt->bindParam(':id', $post_id ,PDO::PARAM_INT);
 	<script src="js/demo/chart-area-demo.js"></script>
 	<script src="js/demo/chart-pie-demo.js"></script>
 
-
-	<?php if ($test): ?>
-	<!-- Button trigger modal -->
-	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-	Launch static backdrop modal
-	</button>
-
-	<!-- Modal -->
-	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		</div>
-		<div class="modal-body">
-			...
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Understood</button>
-		</div>
-		</div>
-	</div>
-	</div>
-	<?php endif ?>
 </body>
 </html>
+
+

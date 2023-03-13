@@ -14,9 +14,6 @@ function createPost($vtitle, $vdesc, $user_id) {
     $stmt->execute([$vtitle, $vdesc , 0,0,0 , $user_id]);
 }
 
-// Check if user is logged in
-if (isset($user_id )) {
-
     // Get post data from form
     if (isset($_POST['title']) && isset($_POST['desc'])) {
 		$vtitle = $_POST['title'];
@@ -28,10 +25,7 @@ if (isset($user_id )) {
 		header('Location: index_posts.php');
 
     }
-else {
-    echo "Please log in to create a post.";
-}
-}
+
 
 ?>
 

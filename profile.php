@@ -126,8 +126,6 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 
 
 </div>
-</div>
-</div>
 
 
 </body>

@@ -3,16 +3,13 @@
 include_once("config.php");
 
 session_start();
-$id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
 //fetching data in descending order (lastest entry first)
-$resultUsers = $dbConn->query("SELECT * FROM users ORDER BY id DESC");
-
-	$resultUsers->execute(array(':id' => $id ) ) ;
-	$user = $resultUsers->fetch();
-
+$stmt = $dbConn->query("SELECT * FROM users  ");
+$resultUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 # $resultUsers = $dbConn->query("SELECT * FROM posts ORDER BY id DESC");
 
-if ( !($id))  {
+if ( !($user_id))  {
 	header("Location: login.php");
 }
 
@@ -64,12 +61,13 @@ if ( !($id))  {
 					</tr>
 
 					<?php
-					while($row = $resultUsers->fetch(PDO::FETCH_ASSOC)) {
+					foreach ($resultUsers as $row): {
 						echo "<tr>";
 						echo "<td>".$row['username']."</td>";
 						echo "<td>".$row['email']."</td>";
 						echo "<td><a href=\"editUser.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deleteUser.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>";
 					}
+					endforeach;
 					?>
 				</table>
 
@@ -104,30 +102,5 @@ if ( !($id))  {
 	<script src="js/demo/chart-pie-demo.js"></script>
 
 
-	<?php if ($test): ?>
-	<!-- Button trigger modal -->
-	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-	Launch static backdrop modal
-	</button>
-
-	<!-- Modal -->
-	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		</div>
-		<div class="modal-body">
-			...
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Understood</button>
-		</div>
-		</div>
-	</div>
-	</div>
-	<?php endif ?>
 </body>
 </html>
