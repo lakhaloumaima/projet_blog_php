@@ -80,7 +80,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
                 <img class="rounded-circle mt-2"
                     width="120px"
                     src="../img/logo.png"> <br>
-                <h3 class="text-black-50"><?php echo $_SESSION['email']; ?> </h3><span> </span></div>
+                <h3 class="text-black-50"><?php echo $email; ?> </h3><span> </span></div>
         </div>
         <div class="col-md-6 border-right">
             <div class="p-3 py-2">

@@ -52,7 +52,7 @@ function createPost($vtitle, $vdesc, $user_id) {
 				<br>
 				<tr>
 					<td>Description </td>
-					<td><input type="text" class="form-control" name="desc"></td>
+					<td><textarea rows="5"  type="text" class="form-control" name="desc"></textarea> </td>
 				</tr>
 				<br>
 

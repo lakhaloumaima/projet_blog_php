@@ -384,19 +384,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<?php foreach ($resultPosts as $row): {
 					echo "<div class='card-group'>" ;
 					echo   "<div class='card'>" ;
-					echo   "<div class='card-body'> " ;
+					echo   "<div class='card-body row'> " ;
 					echo   "<h3 class='card-title'>" .$row['title']. "</h3>" ;
-					echo   "<p class='card-text'> ".$row['desc']." </p>" ;
-					if( $row['nb_report'] >= 2 ):
+					if( $row['nb_report'] >= 2 and  $row['user_id'] != $user_id ):
 						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-danger' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
 					endif ;
-					if( $row['nb_report'] <= 1 ):
+					if( $row['nb_report'] <= 1 and  $row['user_id'] != $user_id ):
 						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-success' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
 					endif ;
+					echo   "<p class='card-text'> ".$row['desc']." </p>" ;
+
 					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
 					echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
-					echo  "<form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
-					echo  "<form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					echo  "<div class='row' ><form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form> <span>   </span> <form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					echo  "</div> " ;
 					echo  "</div> " ;
 					echo" </div> " ;

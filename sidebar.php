@@ -1,7 +1,7 @@
 <?php
 include_once("config.php");
 session_start();
-
+$user_id = $_SESSION['user_id'];
 
 if(isset($_GET['search_term'])) {
 	// Retrieve the search term from the form data
@@ -20,7 +20,16 @@ if(isset($_GET['search_term'])) {
 
   }
 
+//selecting data associated with this particular id
+$sql = "SELECT * FROM users WHERE id=:user_id";
+$query = $dbConn->prepare($sql);
+$query->execute(array(':user_id' => $user_id));
 
+while($row = $query->fetch(PDO::FETCH_ASSOC))
+{
+	$username = $row['username'];
+	$email = $row['email'];
+}
 
 ?>
 <html>
@@ -147,7 +156,7 @@ if(isset($_GET['search_term'])) {
 					<li class="nav-item dropdown no-arrow">
 								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
 									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?php echo $_SESSION['username']; ?>  </span>
+									<span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?php echo $username; ?>  </span>
 									<img class="img-profile rounded-circle"
 										src="img/undraw_profile.svg">
 								</a>
