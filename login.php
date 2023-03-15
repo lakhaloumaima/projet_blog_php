@@ -24,9 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
+        if ( $user['role'] == "user"  ) {
+            header('Location: index_posts.php');
+            exit;
+        }
+        else {
+            header('Location: index.php');
+            exit;
+        }
 
-        header('Location: index_posts.php');
-        exit;
     }
     else {
         $error = 'Invalid Email or Password';

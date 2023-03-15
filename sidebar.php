@@ -3,6 +3,7 @@ include_once("config.php");
 session_start();
 
 $user_id = $_SESSION['user_id'];
+$role = $_SESSION['role'];
 
 if(isset($_GET['search_term'])) {
 	// Retrieve the search term from the form data
@@ -65,7 +66,11 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 				<div class="sidebar-brand-icon rotate-n-15">
 					<i class="fas fa-laugh-wink"></i>
 				</div>
-				<div class="sidebar-brand-text mx-3">User  <sup> * </sup></div>
+				<?php if( $role == "user" ):
+					echo "<div class='sidebar-brand-text mx-3'>User  <sup> * </sup></div>" ;
+				else:
+					echo "<div class='sidebar-brand-text mx-3'>ADMIN  <sup> * </sup></div>" ;
+				endif; ?>
 			</a>
 
 			<!-- Divider -->

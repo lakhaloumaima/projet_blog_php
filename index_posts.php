@@ -5,6 +5,7 @@ include_once("config.php");
 
 session_start();
 $user_id = $_SESSION['user_id'];
+$role = $_SESSION['role'];
 
 if(isset($_GET['search_term'])) {
   // Retrieve the search term from the form data
@@ -252,11 +253,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
 			<!-- Sidebar - Brand -->
-			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index_posts.php">
-				<div class="sidebar-brand-icon rotate-n-15">
-					<i class="fas fa-laugh-wink"></i>
-				</div>
-				<div class="sidebar-brand-text mx-3">User  <sup> * </sup></div>
+			<?php if( $role == "user" ):
+				echo  "<a class='sidebar-brand d-flex align-items-center justify-content-center' href='index_posts.php'>"  ;
+			else:
+				echo  "<a class='sidebar-brand d-flex align-items-center justify-content-center' href='index.php'>"  ;
+			endif; ?>
+			<div class="sidebar-brand-icon rotate-n-15">
+				<i class="fas fa-laugh-wink"></i>
+			</div>
+			<?php if( $role == "user" ):
+				echo "<div class='sidebar-brand-text mx-3'>USER  <sup> * </sup></div>" ;
+			else:
+				echo "<div class='sidebar-brand-text mx-3'>ADMIN  <sup> * </sup></div>" ;
+			endif; ?>
 			</a>
 
 			<!-- Divider -->

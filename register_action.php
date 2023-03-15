@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $email = $_POST['email'];
     $username = $_POST['username'];
+    $role = $_POST['role'];
     $password = md5($_POST['password']);
     #$password = $_POST['password'] ;
    # $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -15,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     #$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert the user into the database
-    $stmt = $dbConn->prepare("INSERT INTO users ( email , username, password ) VALUES (:email , :username, :password)");
+    $stmt = $dbConn->prepare("INSERT INTO users ( email , username , role , password ) VALUES (:email , :username, :role  , :password)");
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':role', $role);
     $stmt->bindParam(':password', $password );
 
     $stmt->execute();

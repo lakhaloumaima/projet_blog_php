@@ -45,8 +45,8 @@ if(isset($_POST['update'])) {
 		// $query->execute(array(':name' => $name, ':email' => $email, ':age' => $age));
 
 		//display success message
-		echo "<font color='green'>Data added successfully.";
-		echo "<br/><a href='index_posts.php'>View Result</a>";
+		// echo "<font color='green'>Data added successfully.";
+		// echo "<br/><a href='index_posts.php'>View Result</a>";
 		header('Location: index_posts.php');
 	}
 }
