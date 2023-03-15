@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $dbConn->prepare("SELECT * FROM users WHERE email = ? ");
     $stmt->execute( [ $email ]);
 
-    if ($stmt->rowCount() < 0) {
+    if ( $stmt ) {
         // Insert the user into the database
         $stmt = $dbConn->prepare("INSERT INTO users ( email , username , role , password ) VALUES (:email , :username, :role  , :password)");
         $stmt->bindParam(':email', $email);

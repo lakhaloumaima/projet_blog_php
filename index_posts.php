@@ -343,9 +343,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					endif ;
 					echo   "<br><p class='card-text' style='float:left' > ".$row['desc']." </p>" ;
 					if ( $row['user_id'] != $user_id ):
-						echo   "<p class='card-text' style='float:left ;color:green' > Posted By : ".$row['username']."  </p><br><br>" ;
+						echo   "<h5 class='card-text' style='float:left ;color:green' > Posted By : ".$row['username']."  </h5><br><br>" ;
 					else:
-						echo   "<p class='card-text' style='float:left ;color:green' > Posted By : Me </p><br><br>" ;
+						echo   "<h5 class='card-text' style='float:left ;color:green' > Posted By : Me </h5><br><br>" ;
 					endif ;
 					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
 					echo   "<br><br><td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;

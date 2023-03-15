@@ -10,6 +10,10 @@ $sql = "DELETE FROM users WHERE id=:id";
 $query = $dbConn->prepare($sql);
 $query->execute(array(':id' => $id));
 
+$sql = "DELETE FROM posts WHERE user_id=:id ";
+$query = $dbConn->prepare($sql);
+$query->execute(array(':id' => $id));
+
 //redirecting to index.php
 header("Location:index.php");
 ?>

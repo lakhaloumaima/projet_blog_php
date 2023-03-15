@@ -3,23 +3,31 @@ include_once("config.php");
 
 session_start();
 
+// define function to verify hashed password
+function verifyPassword($oldPassword, $hashed_password) {
+    return md5($oldPassword) === $hashed_password;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$email = $_POST['email'];
-
-    $newPassword = md5($_POST['password']);
+    $oldPassword = $_POST['password'] ;
+    $newPassword = md5($_POST['newPassword']);
 
 	// checking empty fields
-	if(empty($email)  || empty($newPassword)  ) {
+	if(empty($email)  || empty($oldPassword) || empty($newPassword)  ) {
 
 		if(empty($email)) {
 			echo "<font color='red'> Email field is empty.</font><br/>";
+		}
+        if(empty($oldPassword)) {
+			echo "<font color='red'>Old Password field is empty.</font><br/>";
 		}
 
 		// if(empty($password)) {
 		// 	echo "<font color='red'>Password field is empty.</font><br/>";
 		// }
         if(empty($newPassword)) {
-			echo "<font color='red'> NewPassword field is empty.</font><br/>";
+			echo "<font color='red'> New Password field is empty.</font><br/>";
 		}
 
 		//link to the previous page
@@ -27,9 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	} else {
 		// if all the fields are filled (not empty)
         $stmt = $dbConn->prepare("SELECT * FROM users WHERE email = ? ");
-        $stmt->execute( [ $email ]);
+        $stmt->execute([ $email ]);
+        $user = $stmt->fetch();
 
-        if ($stmt->rowCount() > 0) {
+        if ($user && verifyPassword($oldPassword, $user['password']) ) {
             //updating the table
             $stmt = $dbConn->prepare("UPDATE users SET `password` = :password  WHERE email = :email");
             $stmt->execute(array(':password' => $newPassword, ':email' => $email  ));
@@ -161,10 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
             <p><label for="username">Email</label></p>
                 <input type="email" name="email" id="email">
-                <!-- <p><label for="username">password</label></p>
-                <input type="password" name="password" id="password"> -->
-                <p><label for="username">newPassword</label></p>
+                <p><label for="username">password</label></p>
                 <input type="password" name="password" id="password">
+                <p><label for="username">newPassword</label></p>
+                <input type="password" name="newPassword" id="newPassword">
                 <button type="submit" >Reset Password</button>
             </div>
         </form>

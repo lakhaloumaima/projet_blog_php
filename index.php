@@ -4,7 +4,7 @@ include_once("config.php");
 
 session_start();
 $user_id = $_SESSION['user_id'];
-
+$ROLE = $_SESSION['role'];
 if(isset($_GET['search_user'])) {
   // Retrieve the search term from the form data
   $search_user = $_GET['search_user'];
@@ -21,7 +21,7 @@ if(isset($_GET['search_user'])) {
 
 }
 
-if ( !($user_id))  {
+if ( !($user_id) || $ROLE != "admin")  {
 	header("Location: login.php");
 }
 
