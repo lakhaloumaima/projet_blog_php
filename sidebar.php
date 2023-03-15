@@ -1,6 +1,7 @@
 <?php
 include_once("config.php");
 session_start();
+
 $user_id = $_SESSION['user_id'];
 
 if(isset($_GET['search_term'])) {
@@ -8,15 +9,15 @@ if(isset($_GET['search_term'])) {
 	$search_term = $_GET['search_term'];
 
 	// Execute a PDO query to search for posts by title
-	$stmt = $dbConn->prepare("SELECT * FROM users WHERE username LIKE :search_term  ");
+	$stmt = $dbConn->prepare("SELECT * FROM posts WHERE title LIKE :search_term  AND user_id = $user_id ");
 	$stmt->bindValue(':search_term', '%' . $search_term . '%');
 	$stmt->execute();
-	$resultUsers = $stmt->fetchAll();
+	$resultPosts = $stmt->fetchAll();
 
   } else {
 	// If no search term is provided, retrieve post
-	$stmt = $dbConn->query("SELECT * FROM users ");
-	$resultUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$stmt = $dbConn->query("SELECT * FROM posts  WHERE user_id = $user_id ");
+	$resultPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   }
 
@@ -144,7 +145,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 							<input type="text" name="search_term" id="search_term" class="form-control bg-light border-0 small" placeholder="Search for..."
 								aria-label="Search" aria-describedby="basic-addon2">
 							<div class="input-group-append">
-								<button class="btn btn-primary" name="username" id="username" type="submit">
+								<button class="btn btn-primary"  type="submit">
 									<i class="fas fa-search fa-sm"></i>
 								</button>
 							</div>
@@ -163,16 +164,16 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 								<!-- Dropdown - User Information -->
 								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
 									aria-labelledby="userDropdown">
-									<a class="dropdown-item" href="profile.php">
+									<a class="dropdown-item" href="profile.php" >
 										<i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-										Profile
+										<input class="btn btn-white" type="submit" value="Profile" name="profile" >
 									</a>
 
 									<div class="dropdown-divider"></div>
 									<form action="logout.php" method="post">
 										<a class="dropdown-item"  >
 											<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-											<input type="submit" value="Logout" name="logout" >
+											<input class="btn btn-white" type="submit" value="Logout" name="logout" >
 										</a>
 									</form>
 								</div>

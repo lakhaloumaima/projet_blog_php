@@ -61,7 +61,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 	?>
 
 	<div class="container" >
-		<a href="index.php"> Back to Dashboard  </a>
+		<a href="index_posts.php"> Back to Dashboard  </a>
 		<br/><br/>
 
 		<form name="form1" method="POST" >

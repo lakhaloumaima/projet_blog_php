@@ -46,8 +46,8 @@ if(isset($_POST['update'])) {
 
 		//display success message
 		echo "<font color='green'>Data added successfully.";
-		echo "<br/><a href='index.php'>View Result</a>";
-		header('Location: index.php');
+		echo "<br/><a href='index_posts.php'>View Result</a>";
+		header('Location: index_posts.php');
 	}
 }
 

@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
 			<!-- Sidebar - Brand -->
-			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index_posts.php">
 				<div class="sidebar-brand-icon rotate-n-15">
 					<i class="fas fa-laugh-wink"></i>
 				</div>
@@ -336,7 +336,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							<input type="text" name="search_term" id="search_term" class="form-control bg-light border-0 small" placeholder="Search for..."
 								aria-label="Search" aria-describedby="basic-addon2">
 							<div class="input-group-append">
-								<button class="btn btn-primary" name="title" id="title" type="submit">
+								<button class="btn btn-primary" type="submit">
 									<i class="fas fa-search fa-sm"></i>
 								</button>
 							</div>
@@ -355,16 +355,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 								<!-- Dropdown - User Information -->
 								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
 									aria-labelledby="userDropdown">
-									<a class="dropdown-item" href="profile.php">
+									<a class="dropdown-item" href="profile.php" >
 										<i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-										Profile
+										<input class="btn btn-white" type="submit" value="Profile" name="profile" >
 									</a>
 
 									<div class="dropdown-divider"></div>
 									<form action="logout.php" method="post">
 										<a class="dropdown-item"  >
 											<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-											<input type="submit" value="Logout" name="logout" >
+											<input class="btn btn-white" type="submit" value="Logout" name="logout" >
 										</a>
 									</form>
 								</div>
@@ -373,7 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				</nav>
 
 		<!-- Begin Page Content -->
-		<div class="container-fluid">
+		<div class="container">
 
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
 				<h2 class="mb-0"> Welcome, <?php echo $_SESSION['username']; ?> !! </h2>
@@ -383,20 +383,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 				<?php foreach ($resultPosts as $row): {
 					echo "<div class='card-group'>" ;
-					echo   "<div class='card'>" ;
-					echo   "<div class='card-body row'> " ;
-					echo   "<h3 class='card-title'>" .$row['title']. "</h3>" ;
-					if( $row['nb_report'] >= 2 and  $row['user_id'] != $user_id ):
-						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-danger' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+					echo   "<div class='card row'>" ;
+					echo   "<div class='card-body'> " ;
+					echo   "<h3 class='card-title' style='float:left' >" .$row['title']. "</h3>" ;
+					if ( $row['nb_report'] >= 2 and  $row['user_id'] != $user_id ):
+						echo  "<div style='float:right' ><form method='POST' style='float:right' ><input  name='nb_report' class='btn btn-danger' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					endif ;
 					if( $row['nb_report'] <= 1 and  $row['user_id'] != $user_id ):
-						echo  "<form method='POST' ><input  name='nb_report' class='btn btn-success' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form>" ;
+						echo  "<div style='float:right' ><form method='POST' style='float:right'><input  name='nb_report' class='btn btn-success' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					endif ;
-					echo   "<p class='card-text'> ".$row['desc']." </p>" ;
+					echo   "<p class='card-text' style='float:left' > ".$row['desc']." </p>" ;
 
 					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
 					echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
-					echo  "<div class='row' ><form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form> <span>   </span> <form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
+					echo  "<div class='row'  ><form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form> <span>   </span> <form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					echo  "</div> " ;
 					echo  "</div> " ;
 					echo" </div> " ;

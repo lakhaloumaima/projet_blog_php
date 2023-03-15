@@ -7,12 +7,12 @@ session_start();
 $user_id = $_SESSION['user_id'];
 //fetching data in descending order (lastest entry first)
 
-if(isset($_GET['title'])) {
+if(isset($_GET['search_term'])) {
   // Retrieve the search term from the form data
-  $search_term = $_GET['title'];
+  $search_term = $_GET['search_term'];
 
   // Execute a PDO query to search for posts by title
-  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE title LIKE :search_term");
+  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE title LIKE :search_term AND user_id = $user_id ");
   $stmt->bindValue(':search_term', '%' . $search_term . '%');
   $stmt->execute();
   $resultPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -109,11 +109,11 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 
                     <?php foreach ($resultPosts as $row): {
                         echo "<div class='card-group'>" ;
-                        echo "<div class='card'>" ;
+                        echo "<div class='card row'>" ;
                         echo   "<div class='card-body'> " ;
-                        echo    "<h3 class='card-title'>" .$row['title']. "</h3>" ;
-                        echo   " <p class='card-text'> ".$row['desc']." </p>" ;
-                        echo "<td ><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>";
+                        echo    "<h3 class='card-title' style='float:left' >" .$row['title']. "</h3>" ;
+                        echo "<div style='float:right' ><td ><a style='color:green' href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a style='color:red' href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td></div>";
+                        echo   " <p class='card-text' style='float:left'> ".$row['desc']." </p>" ;
                         echo " </div> " ;
                         echo " </div> " ;
                         echo " </div> " ;
