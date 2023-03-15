@@ -166,10 +166,10 @@ if ( !($user_id))  {
 
 								<div class="dropdown-divider"></div>
 								<form action="logout.php" method="post">
-									<a class="dropdown-item"  >
-										<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-										<input type="submit" value="Logout" name="logout" >
-									</a>
+										<a class="dropdown-item"  >
+											<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+											<input class="btn btn-white" type="submit" value="Logout" name="logout" >
+										</a>
 								</form>
 							</div>
 						</li>

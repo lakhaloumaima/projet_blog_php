@@ -18,7 +18,8 @@ if(isset($_GET['search_term'])) {
 
 } else {
   // If no search term is provided, retrieve post
-  $stmt = $dbConn->query("SELECT * FROM posts  WHERE nb_report < 3 ORDER BY id DESC");
+  $stmt = $dbConn->query("SELECT posts.id, posts.title, posts.desc,posts.nb_report ,posts.nb_like ,posts.nb_dislike,posts.user_id , users.username FROM posts
+  INNER JOIN users ON posts.user_id = users.id WHERE nb_report < 3 ORDER BY id DESC");
   $resultPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 }
@@ -340,10 +341,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					if( $row['nb_report'] <= 1 and  $row['user_id'] != $user_id ):
 						echo  "<div style='float:right' ><form method='POST' style='float:right'><input  name='nb_report' class='btn btn-success' type='submit' value='" .$row['nb_report']. "' > reports &nbsp; <input name='vote_type' type='hidden' value='report' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					endif ;
-					echo   "<p class='card-text' style='float:left' > ".$row['desc']." </p>" ;
-
+					echo   "<br><p class='card-text' style='float:left' > ".$row['desc']." </p>" ;
+					if ( $row['user_id'] != $user_id ):
+						echo   "<p class='card-text' style='float:left ;color:green' > Posted By : ".$row['username']."  </p><br><br>" ;
+					else:
+						echo   "<p class='card-text' style='float:left ;color:green' > Posted By : Me </p><br><br>" ;
+					endif ;
 					#if( $user_id == $row['user_id'] ): echo  "<td><a href=\"editPost.php?id=$row[id]\"><i class='fas fa-edit fa-sm fa-fw mr-2 text-green-600'></i></a> | <a href=\"deletePost.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fas fa-trash fa-sm fa-fw mr-2 text-red-600'></i></a></td>"; endif ;
-					echo   "<td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
+					echo   "<br><br><td><form method='GET' ><input type='hidden' name='id' value=".$row['id']. "></form></td> "  ;
 					echo  "<div class='row'  ><form method='POST' ><input  name='nb_like' class='btn btn-info' type='submit' value='" .$row['nb_like']. "' > <input  name='nb_dislike' class='btn btn-info' type='hidden' value='" .$row['nb_dislike']. "' ><i class='fa fa-thumbs-up fa-lg' aria-hidden='true'></i>  <input name='vote_type' type='hidden' value='like' > <input name='id' type='hidden' value='" .$row['id']. "' > </form> <span>   </span> <form method='POST' name='form2' ><input  name='nb_dislikee' class='btn btn-info' type='submit' value='" .$row['nb_dislike']. "' > <input  name='nb_likee' class='btn btn-info' type='hidden' value='" .$row['nb_like']. "' > <i class='fa fa-thumbs-down fa-lg' aria-hidden='true'></i> <input name='vote_type' type='hidden' value='dislike' > <input name='id' type='hidden' value='" .$row['id']. "' > </form></div>" ;
 					echo  "</div> " ;
 					echo  "</div> " ;

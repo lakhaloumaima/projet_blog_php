@@ -11,24 +11,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $role = $_POST['role'];
     $password = md5($_POST['password']);
 
-    // Insert the user into the database
-    $stmt = $dbConn->prepare("INSERT INTO users ( email , username , role , password ) VALUES (:email , :username, :role  , :password)");
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':role', $role);
-    $stmt->bindParam(':password', $password );
+    $stmt = $dbConn->prepare("SELECT * FROM users WHERE email = ? ");
+    $stmt->execute( [ $email ]);
 
-    $stmt->execute();
+    if ($stmt->rowCount() < 0) {
+        // Insert the user into the database
+        $stmt = $dbConn->prepare("INSERT INTO users ( email , username , role , password ) VALUES (:email , :username, :role  , :password)");
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':role', $role);
+        $stmt->bindParam(':password', $password );
 
-    // Set the session variables
-    $_SESSION['user_id'] = $dbConn->lastInsertId();
+        $stmt->execute();
 
-    echo "<font color='green'>Data added successfully.";
-    echo "<br/><a href='login.php'>View Result</a>";
+        // Set the session variables
+        $_SESSION['user_id'] = $dbConn->lastInsertId();
 
-    // Redirect to the home page
-    header('Location: login.php');
+        echo "<font color='green'>Data added successfully.";
+        echo "<br/><a href='login.php'>View Result</a>";
 
+        // Redirect to the home page
+        header('Location: login.php');
+    }
+    else {
+        echo "<div  class='alert alert-danger' role='alert' > Email Exist !! </div> ";
+    }
 }
 else {
     echo "<font color='red'>Data not added successfully.";

@@ -3,43 +3,47 @@ include_once("config.php");
 
 session_start();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$email = $_POST['email'];
 
-function forgotPassword($email) {
-    // check if email exists in the database
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    $newPassword = md5($_POST['password']);
 
-    if (!$user) {
-        // email not found in the database
-        return false;
+	// checking empty fields
+	if(empty($email)  || empty($newPassword)  ) {
+
+		if(empty($email)) {
+			echo "<font color='red'> Email field is empty.</font><br/>";
+		}
+
+		// if(empty($password)) {
+		// 	echo "<font color='red'>Password field is empty.</font><br/>";
+		// }
+        if(empty($newPassword)) {
+			echo "<font color='red'> NewPassword field is empty.</font><br/>";
+		}
+
+		//link to the previous page
+		echo "<br/><a href='javascript:self.history.back();'>Go Back</a>";
+	} else {
+		// if all the fields are filled (not empty)
+        $stmt = $dbConn->prepare("SELECT * FROM users WHERE email = ? ");
+        $stmt->execute( [ $email ]);
+
+        if ($stmt->rowCount() > 0) {
+            //updating the table
+            $stmt = $dbConn->prepare("UPDATE users SET `password` = :password  WHERE email = :email");
+            $stmt->execute(array(':password' => $newPassword, ':email' => $email  ));
+
+            // Check if the update was successful
+            if ($stmt->rowCount() > 0) {
+                header("Location: login.php");
+            }
+
+	    }
+        else {
+            echo "<div  class='alert alert-danger' role='alert' > Email Not Exist !! </div> ";
+        }
     }
-
-    // generate a new password
-    $newPassword = generatePassword();
-
-    // update the user's password in the database
-    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-    $stmt->execute([password_hash($newPassword, PASSWORD_DEFAULT), $user['id']]);
-
-    // send the new password to the user's email
-    $subject = "New Password";
-    $message = "Your new password is: " . $newPassword;
-    $headers = "From: webmaster@example.com\r\n";
-    $headers .= "Content-type: text/html\r\n";
-    mail($email, $subject, $message, $headers);
-
-    return true;
-}
-
-function generatePassword() {
-    // generate a random password of 8 characters
-    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    $password = "";
-    for ($i = 0; $i < 8; $i++) {
-        $password .= $chars[rand(0, strlen($chars) - 1)];
-    }
-    return $password;
 }
 
 ?>
@@ -153,15 +157,20 @@ function generatePassword() {
 	<div class="row">
 		<h1>Forgot Password</h1>
 		<h6 class="information-text">Enter your registered email to reset your password.</h6>
-		<div class="form-group">
-			<input type="email" name="user_email" id="user_email">
-			<p><label for="username">Email</label></p>
-			<button onclick="showSpinner()">Reset Password</button>
-		</div>
+        <form method="POST"   >
+            <div class="form-group">
+            <p><label for="username">Email</label></p>
+                <input type="email" name="email" id="email">
+                <!-- <p><label for="username">password</label></p>
+                <input type="password" name="password" id="password"> -->
+                <p><label for="username">newPassword</label></p>
+                <input type="password" name="password" id="password">
+                <button type="submit" >Reset Password</button>
+            </div>
+        </form>
 		<div class="footer">
-			<h5>New here? <a href="#">Sign Up.</a></h5>
-			<h5>Already have an account? <a href="#">Sign In.</a></h5>
-			<p class="information-text"><span class="symbols" title="Lots of love from me to YOU!">&hearts; </span><a href="https://www.facebook.com/adedokunyinka.enoch" target="_blank" title="Connect with me on Facebook">Yinka Enoch Adedokun</a></p>
+			<h5>New here? <a href="register.php">Sign Up.</a></h5>
+			<h5>Already have an account? <a href="login.php">Sign In.</a></h5>
 		</div>
 	</div>
 </body>
