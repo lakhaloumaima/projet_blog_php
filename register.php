@@ -60,9 +60,9 @@
                     </div>
             </div>
             <div class="form-group">
-                <button type="submit" name="Submit" class="btn btn-primary">S'inscrire</button>
+                <button type="submit" name="Submit" class="btn btn-primary">Register</button>
             </div>
-            <p class="box-register">Déjà inscrit? <a href="login.php">Connectez-vous ici</a></p>
+            <p class="box-register">have aaccount ? <a href="login.php"> Login </a></p>
         </form>
 
 </body>

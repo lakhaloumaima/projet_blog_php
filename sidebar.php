@@ -62,12 +62,16 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
 			<!-- Sidebar - Brand -->
-			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+			<?php if( $role == "user" ):
+				echo " <a class='sidebar-brand d-flex align-items-center justify-content-center' href='index_posts.php'> " ;
+			else:
+				echo " <a class='sidebar-brand d-flex align-items-center justify-content-center' href='index.php'> " ;
+			endif; ?>
 				<div class="sidebar-brand-icon rotate-n-15">
 					<i class="fas fa-laugh-wink"></i>
 				</div>
 				<?php if( $role == "user" ):
-					echo "<div class='sidebar-brand-text mx-3'>User  <sup> * </sup></div>" ;
+					echo "<div class='sidebar-brand-text mx-3'>USER  <sup> * </sup></div>" ;
 				else:
 					echo "<div class='sidebar-brand-text mx-3'>ADMIN  <sup> * </sup></div>" ;
 				endif; ?>

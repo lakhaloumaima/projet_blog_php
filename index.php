@@ -3,10 +3,7 @@
 include_once("config.php");
 
 session_start();
-$id = $_SESSION['user_id'];
-//fetching data in descending order (lastest entry first)
-
-#$resultUsers = $dbConn->query("SELECT * FROM users ORDER BY id DESC");
+$user_id = $_SESSION['user_id'];
 
 if(isset($_GET['search_user'])) {
   // Retrieve the search term from the form data
@@ -24,7 +21,7 @@ if(isset($_GET['search_user'])) {
 
 }
 
-if ( !($id))  {
+if ( !($user_id))  {
 	header("Location: login.php");
 }
 
@@ -135,11 +132,6 @@ if ( !($id))  {
 
 			<!-- Topbar -->
 			<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-				<!-- Sidebar Toggle (Topbar) -->
-				<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-					<i class="fa fa-bars"></i>
-				</button>
 
 				<!-- Topbar Search -->
 				<form method="GET" action="index.php"

@@ -10,6 +10,6 @@ $sql = "DELETE FROM posts WHERE id=:id";
 $query = $dbConn->prepare($sql);
 $query->execute(array(':id' => $id));
 
-//redirecting to the display page (index.php in our case)
+//redirecting to index_posts.php
 header("Location:index_posts.php");
 ?>

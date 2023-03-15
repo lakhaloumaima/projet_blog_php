@@ -10,10 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $role = $_POST['role'];
     $password = md5($_POST['password']);
-    #$password = $_POST['password'] ;
-   # $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    // Hash the password
-    #$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert the user into the database
     $stmt = $dbConn->prepare("INSERT INTO users ( email , username , role , password ) VALUES (:email , :username, :role  , :password)");
@@ -32,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Redirect to the home page
     header('Location: login.php');
-    #exit();
+
 }
 else {
     echo "<font color='red'>Data not added successfully.";

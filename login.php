@@ -36,8 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     }
     else {
-        $error = 'Invalid Email or Password';
-        # echo "<div  class='alert alert-danger' role='alert' > Invalid Email or Password !! </div> ";
+         echo "<div  class='alert alert-danger' role='alert' > Invalid Email or Password !! </div> ";
     }
 
 }
@@ -80,12 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
             <br>
-            <div class="alert alert-danger" role="alert">
-                <?php if (isset($error)): ?>
-                    <div><?php echo $error; ?></div>
-                <?php endif; ?>
-            </div>
-            <br>
             <div class="form-check">
         <input class="form-check-input" type="checkbox" id="autoSizingCheck2">
         <label class="form-check-label" for="autoSizingCheck2">
@@ -93,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </label>
       </div>
             <div class="form-group">
-                <button type="submit" name="Submit" class="btn btn-primary">Connexion</button>
+                <button type="submit" name="Submit" class="btn btn-primary">Login </button>
             </div>
             <p class="box-register"> <a href="forgot_password.php">  Forgot password ? </a></p>
-            <p class="box-register">Vous êtes nouveau ici? <a href="register.php">S'inscrire</a></p>
+            <p class="box-register">Vous êtes nouveau ici? <a href="register.php"> Register </a></p>
 
         </form>
 

@@ -10,6 +10,6 @@ $sql = "DELETE FROM users WHERE id=:id";
 $query = $dbConn->prepare($sql);
 $query->execute(array(':id' => $id));
 
-//redirecting to the display page (index.php in our case)
-header("Location:dashboard.php");
+//redirecting to index.php
+header("Location:index.php");
 ?>

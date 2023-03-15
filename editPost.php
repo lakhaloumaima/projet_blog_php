@@ -64,7 +64,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC))
 		<a href="index_posts.php"> Back to Dashboard  </a>
 		<br/><br/>
 
-		<form name="form1" method="POST" >
+		<form method="POST" >
 
 				<tr>
 					<td>Name</td>

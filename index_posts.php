@@ -1,7 +1,6 @@
 <?php
 //including the database connection file
 include_once("config.php");
-#include("functions.php");
 
 session_start();
 $user_id = $_SESSION['user_id'];
@@ -12,7 +11,7 @@ if(isset($_GET['search_term'])) {
   $search_term = $_GET['search_term'];
 
   // Execute a PDO query to search for posts by title
-  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE ( title LIKE :search_term ) ORDER BY id DESC");
+  $stmt = $dbConn->prepare("SELECT * FROM posts WHERE ( title LIKE :search_term ) AND nb_report < 3 ORDER BY id DESC");
   $stmt->bindValue(':search_term', '%' . $search_term . '%');
   $stmt->execute();
   $resultPosts = $stmt->fetchAll();
@@ -25,70 +24,10 @@ if(isset($_GET['search_term'])) {
 }
 
 
-// if(isset($_GET['like'])) {
-
-// 	$nb_like = $_GET['nb_like'] ;
-// 	$id = $_GET['id'] ;
-// 	#$user_id = 2 ;
-// 	// checking empty fields
-// 		// if all the fields are filled (not empty)
-
-// 		//update data to database
-// 		$sql = "UPDATE posts set nb_like = :nb_like WHERE id = :id";
-// 		$query = $dbConn->prepare($sql);
-
-// 		$query->bindparam(':nb_like', $nb_like + 1 );
-
-// 		$query->execute();
-
-// 		// Alternative to above bindparam and execute
-// 		// $query->execute(array(':name' => $name, ':email' => $email, ':age' => $age));
-
-// 		//display success message
-// 		echo "<font color='green'>Data added successfully.";
-// 		echo "<br/><a href='index_posts.php'> View Result </a>";
-// 		header('Location: index_posts.php');
-
-// }
-
 if ( !($user_id))  {
 	header("Location: login.php");
 }
 
-// $post_id=$_GET['id'];
-// $sql="SELECT * FROM posts WHERE id=:id";
-// $stmt=$dbConn->prepare($sql);
-// $stmt->bindParam(':id', $post_id ,PDO::PARAM_INT);
-
-// 	$stmt->execute();
-// 	$row=$stmt->fetch();
-// 	$title=$row['title'];
-// 	$desc=$row['desc'];
-// 	$post_id=$row['id'];
-
-// if ( $click = 0  ) {
-	// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	// 	# $click = 0 ;
-	// 	$nb_report = $_POST['nb_report'] ;
-	// 	$id = $_POST['id'] ;
-
-	// 	//updating the table
-	// 	$stmt = $dbConn->prepare("UPDATE posts SET `nb_report` = :nb_report + 1 WHERE id = :id ");
-	// 	$stmt->execute(array(':nb_report' => $nb_report  , ':id' => $id  ));
-
-	// 	echo "Post updated successfully.";
-	// 	// Check if the update was successful
-	// 	if ($stmt) {
-	// 		header("Location: index_posts.php");
-	// 	} else {
-	// 		echo "error !!" ;
-	// 	}
-	// }
-
-// else{
-// 	echo $click ;
-// 	echo "you cannot report that  " ;
-// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if ( isset( $_POST['nb_report'] ) ) {
@@ -214,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 		}
 	}
-
 
 ?>
 
@@ -382,6 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				</nav>
 
 		<!-- Begin Page Content -->
+
 		<div class="container">
 
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">

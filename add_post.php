@@ -3,13 +3,13 @@
 include_once("config.php");
 
 session_start();
-    // Get user ID from session
-    $user_id = $_SESSION['user_id'];
+// Get user ID from session
+$user_id = $_SESSION['user_id'];
 
-// Define createPost function
+
 function createPost($vtitle, $vdesc, $user_id) {
     global $dbConn;
-    // Prepare and execute SQL statement to insert post into database
+
     $stmt = $dbConn->prepare("INSERT INTO posts (`title`, `desc`, `nb_report`, `nb_like`, `nb_dislike`, `user_id`) VALUES (?, ?,?,?,?, ?)");
     $stmt->execute([$vtitle, $vdesc , 0,0,0 , $user_id]);
 }
